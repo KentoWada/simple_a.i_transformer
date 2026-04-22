@@ -11,6 +11,7 @@ with  open('data/shakespeare.txt', 'r', encoding='utf-8') as f:
 
 chars = sorted(list(set(text)))
 vocab_size = len(chars)
+n_embed = 64
 
 char_to_number = {}
 number_to_char = {}
@@ -65,3 +66,39 @@ def get_batch(split):
     input_stack = torch.stack(input_tensor)
     target_stack = torch.stack(target_tensor)
     return input_stack, target_stack
+
+class Transformer(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.embedding_table = nn.Embedding(vocab_size, n_embed)
+        self.position_embedding_table = nn.Embedding(64, 64)
+
+    def forward(self,x):
+        x = self.embedding_table(x)
+        position_tensor = torch.arange(block_size)
+        position_embedded = self.position_embedding_table(position_tensor)
+        positions_included = x + position_embedded
+        return positions_included
+
+model = Transformer()
+x, y  = get_batch('train')
+embeddings = model(x)
+print(embeddings.shape)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
